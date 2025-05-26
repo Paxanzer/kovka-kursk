@@ -95,7 +95,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('refresh_token', refreshToken.value)
     localStorage.setItem('user_role', userRole.value)
     
-    // Получаем данные пользователя 1
+    // Получаем данные пользователя 12
     const api = getApiClient()
     const userResponse = await api.get('auth/user/')
     
