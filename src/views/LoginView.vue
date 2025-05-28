@@ -1,5 +1,11 @@
 <template>
   <div class="login-container" :class="{ 'fade-in': show }">
+    <transition name="fade">
+      <div v-if="authStore.logoutMessage" class="logout-message">
+        {{ authStore.logoutMessage }}
+      </div>
+    </transition>
+
     <h2>Вход в систему</h2>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
@@ -42,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue' // <-- 1. Импортируем onUnmounted
 import { useAuthStore } from '@/store/auth.js'
 
 const authStore = useAuthStore()
@@ -59,6 +65,14 @@ onMounted(() => {
   setTimeout(() => {
     show.value = true
   }, 100)
+})
+
+// 2. ДОБАВЛЕН ХУК ЖИЗНЕННОГО ЦИКЛА ДЛЯ ОЧИСТКИ СООБЩЕНИЯ
+// Он сработает, когда пользователь покинет страницу входа
+onUnmounted(() => {
+  if (authStore.logoutMessage) {
+    authStore.clearLogoutMessage()
+  }
 })
 
 const handleLogin = async () => {
@@ -221,5 +235,17 @@ h2 {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-5px); }
   40%, 80% { transform: translateX(5px); }
+}
+
+/* 3. ДОБАВЛЕНЫ СТИЛИ ДЛЯ НОВОГО СООБЩЕНИЯ */
+.logout-message {
+  margin-bottom: 20px;
+  color: #a6c5e4; /* приглушенный синий/белый цвет */
+  text-align: center;
+  font-size: 14px;
+  padding: 12px;
+  background: rgba(77, 137, 255, 0.1);
+  border: 1px solid rgba(77, 137, 255, 0.2);
+  border-radius: 8px;
 }
 </style>

@@ -44,22 +44,29 @@
 
 
     
-    <div class="carousel-container">
-    <div class="carousel-wrapper" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
-      <div class="carousel-slide" v-for="(slide, index) in slides" :key="index">
-        <img :src="slide.image" :alt="slide.alt">
+    <div class="carousel-container" id="first-carousel" :class="{ 'is-visible': visibleIds.includes('first-carousel') }">
+      <button class="carousel-button prev" @click="prevSlide">&lt;</button>
+      <div class="carousel-wrapper" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
+        <div class="carousel-slide" v-for="(slide, index) in slides" :key="index"
+             :class="{ 'active': currentIndex === index }">
+          <img :src="slide.image" :alt="slide.alt">
+          <div class="slide-overlay">
+            <h3>{{ slide.title }}</h3>
+            <p>{{ slide.description }}</p>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-button next" @click="nextSlide">&gt;</button>
+      
+      <div class="carousel-dots">
+        <span
+          v-for="(slide, index) in slides"
+          :key="index"
+          :class="{ 'dot': true, 'active': currentIndex === index }"
+          @click="goToSlide(index)"
+        ></span>
       </div>
     </div>
-
-    <div class="carousel-dots">
-      <span
-        v-for="(slide, index) in slides"
-        :key="index"
-        :class="{ 'dot': true, 'active': currentIndex === index }"
-        @click="goToSlide(index)"
-      ></span>
-    </div>
-  </div>
 
 
 
@@ -74,22 +81,44 @@
     </div>
   </div>
   <div class="fr-4">
-    <p class="txt-big-l">Фотогалерея магазина</p>
-    <div class="fff2"></div>
+    <p class="txt-big-l" id="gallery-title" :class="{ 'is-visible': visibleIds.includes('gallery-title') }">Фотогалерея магазина</p>
+    <div class="carousel-container gallery-carousel" id="gallery-carousel" :class="{ 'is-visible': visibleIds.includes('gallery-carousel') }">
+      <button class="carousel-button prev" @click="prevGallerySlide">&lt;</button>
+      <div class="carousel-wrapper" :style="{ transform: `translateX(-${galleryIndex * 100}%)` }">
+        <div class="carousel-slide" v-for="(slide, index) in gallerySlides" :key="index"
+             :class="{ 'active': galleryIndex === index }">
+          <img :src="slide.image" :alt="slide.alt">
+          <div class="slide-overlay">
+            <h3>{{ slide.title }}</h3>
+            <p>{{ slide.description }}</p>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-button next" @click="nextGallerySlide">&gt;</button>
+      
+      <div class="carousel-dots">
+        <span
+          v-for="(slide, index) in gallerySlides"
+          :key="index"
+          :class="{ 'dot': true, 'active': galleryIndex === index }"
+          @click="goToGallerySlide(index)"
+        ></span>
+      </div>
+    </div>
   </div>
   <div class="fr-5">
-    <p class="txt-big-m">Сотрудничество</p>
-    <p class="txt-small-m">Наша организация приглашает к сотрудничеству компании, работающие на территории Российской Федерации, имеющие опыт продаж кованых элементов для создания и развития дилерской сети.</p>
+    <p class="txt-big-m" id="cooperation-title" :class="{ 'is-visible': visibleIds.includes('cooperation-title') }">Сотрудничество</p>
+    <p class="txt-small-m" id="cooperation-text" :class="{ 'is-visible': visibleIds.includes('cooperation-text') }">Наша организация приглашает к сотрудничеству компании, работающие на территории Российской Федерации, имеющие опыт продаж кованых элементов для создания и развития дилерской сети.</p>
     <div class="fr-5-1">
-      <div class="card5">
+      <div class="card5" id="card5-1" :class="{ 'is-visible': visibleIds.includes('card5-1') }">
         <p class="card5txtb">Лучшие</p>
         <p class="card5txts">цены на кованые элементы от производителя</p>
       </div>
-      <div class="card5">
+      <div class="card5" id="card5-2" :class="{ 'is-visible': visibleIds.includes('card5-2') }">
         <p class="card5txtb">Широкий</p>
         <p class="card5txts">ассортимент продукции в наличии</p>
       </div>
-      <div class="card5">
+      <div class="card5" id="card5-3" :class="{ 'is-visible': visibleIds.includes('card5-3') }">
         <p class="card5txtb">Возможность</p>
         <p class="card5txts">заказа любым удобным способом</p>
       </div>
@@ -105,67 +134,140 @@
 </template>
 
 <script>
-  import { ref } from 'vue';
-  import image1 from '@/assets/carousel/1_1.jpg';
-  import image2 from '@/assets/carousel/1_2.jpg'; 
-  import image3 from '@/assets/carousel/1_3.jpg'; 
+import { ref } from 'vue';
+import image1 from '@/assets/carousel/1_1.jpg';
+import image2 from '@/assets/carousel/1_2.jpg'; 
+import image3 from '@/assets/carousel/1_3.jpg';
+import gallery1 from '@/assets/carousel/1_3.jpg';
+import gallery2 from '@/assets/carousel/1_2.jpg';
+import gallery3 from '@/assets/carousel/1_1.jpg';
 
-  import { onMounted } from 'vue'; // Импортируем onMounted
-
-
-
-  export default {
+export default {
   setup() {
-    const slide = ref(0); // Инициализация через ref для Vue 3
-    onMounted(() => {
-      // Инициализация карусели может потребоваться для корректной работы.
-      // Обычно достаточно самого факта монтирования компонента.
-    });
-    
-    return{
-      slide
-    };
+    const slide = ref(0);
+    return { slide };
   },
   data() {
     return {
-      
-      visibleIds: [], // Массив ID видимых элементов
-
+      visibleIds: [],
       slides: [
-     { image: image1, alt: 'Image 1' },
-     { image: image2, alt: 'Image 2' },
-     { image: image3, alt: 'Image 3' }
-   ],
+        { 
+          image: image1, 
+          alt: 'Image 1',
+          title: 'Художественная ковка',
+          description: 'Уникальные кованые изделия ручной работы'
+        },
+        { 
+          image: image2, 
+          alt: 'Image 2',
+          title: 'Качество материалов',
+          description: 'Используем только высококачественные материалы'
+        },
+        { 
+          image: image3, 
+          alt: 'Image 3',
+          title: 'Индивидуальный подход',
+          description: 'Создаем изделия по вашим эскизам'
+        }
+      ],
+      gallerySlides: [
+        {
+          image: gallery1,
+          alt: 'Галерея 1',
+          title: 'Наш магазин',
+          description: 'Широкий выбор кованых изделий'
+        },
+        {
+          image: gallery2,
+          alt: 'Галерея 2',
+          title: 'Выставочный зал',
+          description: 'Уникальные образцы работ'
+        },
+        {
+          image: gallery3,
+          alt: 'Галерея 3',
+          title: 'Производство',
+          description: 'Современное оборудование'
+        }
+      ],
       currentIndex: 0,
-      
-    
+      galleryIndex: 0,
+      autoPlayInterval: null,
+      galleryInterval: null
     }
-    
   },
   methods: {
     goToSlide(index) {
       this.currentIndex = index;
+    },
+    goToGallerySlide(index) {
+      this.galleryIndex = index;
+    },
+    nextSlide() {
+      this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+    },
+    nextGallerySlide() {
+      this.galleryIndex = (this.galleryIndex + 1) % this.gallerySlides.length;
+    },
+    prevSlide() {
+      this.currentIndex = this.currentIndex === 0 
+        ? this.slides.length - 1 
+        : this.currentIndex - 1;
+    },
+    prevGallerySlide() {
+      this.galleryIndex = this.galleryIndex === 0 
+        ? this.gallerySlides.length - 1 
+        : this.galleryIndex - 1;
+    },
+    startAutoPlay() {
+      this.autoPlayInterval = setInterval(() => {
+        this.nextSlide();
+      }, 5000);
+      this.galleryInterval = setInterval(() => {
+        this.nextGallerySlide();
+      }, 6000);
+    },
+    stopAutoPlay() {
+      if (this.autoPlayInterval) {
+        clearInterval(this.autoPlayInterval);
+      }
+      if (this.galleryInterval) {
+        clearInterval(this.galleryInterval);
+      }
     }
   },
-
-  
   mounted() {
-    const idsToObserve = ['fr1-1', 'fr-element', 'fr-2-txt', 'txt-big-r', 'txt-small-m', 'txt-small-m2', /* ... добавьте остальные ID в нужном порядке ... */];
-
+    const idsToObserve = [
+      'fr1-1', 
+      'fr-element', 
+      'fr-2-txt', 
+      'txt-big-r', 
+      'txt-small-m', 
+      'txt-small-m2',
+      'first-carousel',
+      'gallery-title',
+      'gallery-carousel',
+      'cooperation-title',
+      'cooperation-text',
+      'card5-1',
+      'card5-2',
+      'card5-3'
+    ];
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const id = entry.target.id;
             if (!this.visibleIds.includes(id)) {
-              this.visibleIds.push(id); // Добавляем ID в массив видимых элементов
+              this.visibleIds.push(id);
             }
-            observer.unobserve(entry.target); // Прекращаем наблюдение после появления
+            observer.unobserve(entry.target);
           }
         });
       },
       {
-        root: null, // Используем viewport
+        root: null,
         rootMargin: '0px',
         threshold: 0.1,
       }
@@ -175,13 +277,15 @@
       const element = document.getElementById(id);
       if (element) {
         observer.observe(element);
-      } else {
-        console.warn(`Элемент с id "${id}" не найден.`);
       }
     });
-  },
-}
 
+    this.startAutoPlay();
+  },
+  beforeUnmount() {
+    this.stopAutoPlay();
+  }
+}
 </script>
 
 <style scoped>
@@ -303,49 +407,126 @@
 
 /* Карусель */
 .carousel-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 2rem auto;
   position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-wrapper {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  height: 500px;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  position: relative;
+  height: 100%;
 }
 
 .carousel-slide img {
   width: 100%;
-  height: auto;
-  border-radius: 8px;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slide-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  color: white;
+  padding: 2rem;
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.carousel-slide:hover .slide-overlay {
+  transform: translateY(0);
+}
+
+.slide-overlay h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+}
+
+.slide-overlay p {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+  z-index: 2;
+}
+
+.carousel-button:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.carousel-button.prev {
+  left: 1rem;
+}
+
+.carousel-button.next {
+  right: 1rem;
 }
 
 .carousel-dots {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  justify-content: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  z-index: 2;
 }
 
 .dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.5);
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .dot.active {
-  background: rgba(255,255,255,0.8);
+  background: white;
+  transform: scale(1.2);
 }
 
 /* Галерея */
 .fr-4 {
   width: 100%;
   padding: 2rem 1rem;
-  text-align: right;
+  text-align: center;
 }
 
 .txt-big-l {
   font-size: 2rem;
-  margin-bottom: 1rem;
-  max-width: 800px;
-  margin-left: auto;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 /* Сотрудничество */
@@ -400,5 +581,51 @@
 @media (max-width: 480px) {
   .fr-elements { grid-template-columns: 1fr; }
   .txt1 { font-size: 1.8rem; }
+}
+
+.gallery-carousel {
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.gallery-carousel .carousel-slide img {
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.gallery-carousel .slide-overlay {
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+}
+
+/* Анимации появления для всех элементов */
+.carousel-container, .txt-big-l, .txt-big-m, .card5, .txt-small-m {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+}
+
+#first-carousel {
+  transform: translateX(-30px);
+}
+
+#gallery-carousel {
+  transform: translateX(30px);
+}
+
+.card5 {
+  transform: translateY(50px);
+  transition-delay: 0.2s;
+}
+
+#card5-2 {
+  transition-delay: 0.4s;
+}
+
+#card5-3 {
+  transition-delay: 0.6s;
+}
+
+.txt-big-l, .txt-big-m {
+  transform: translateY(-20px);
 }
 </style>

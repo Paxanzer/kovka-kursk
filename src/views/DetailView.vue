@@ -67,8 +67,12 @@
           <p>{{ product.specifications }}</p>
         </div>
 
-        <button class="add-to-cart">
-          <span>Добавить в корзину</span>
+        <button 
+          class="add-to-cart" 
+          :class="{ 'in-cart': isInCart }"
+          @click="toggleCart"
+        >
+          <span>{{ isInCart ? 'В корзине' : 'Добавить в корзину' }}</span>
         </button>
       </div>
     </div>
@@ -96,10 +100,15 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { useAuthStore } from '@/store/auth'
 import axios from 'axios'
 
 const route = useRoute()
+const router = useRouter()
+const store = useStore()
+const authStore = useAuthStore()
 const product = ref({})
 const isLoading = ref(true)
 const error = ref(null)
@@ -109,6 +118,11 @@ const baseUrl = 'http://localhost:8000'
 // Добавляем состояния для модального окна
 const showImageModal = ref(false)
 const modalImageUrl = ref('')
+
+// Проверяем, находится ли товар в корзине
+const isInCart = computed(() => {
+  return store.state.cart.items.some(item => item.id === product.value.id)
+})
 
 const productId = computed(() => parseInt(route.params.productId))
 
@@ -150,6 +164,26 @@ const closeModal = () => {
 
 const handleModalImageError = (e) => {
   e.target.src = require('@/assets/img/no-image.webp')
+}
+
+// Функция для добавления/удаления товара из корзины
+const toggleCart = () => {
+  if (!authStore.isAuthenticated) {
+    // Если пользователь не авторизован, перенаправляем на страницу регистрации
+    router.push('/register')
+    return
+  }
+
+  if (isInCart.value) {
+    store.commit('cart/removeItem', product.value.id)
+  } else {
+    store.commit('cart/addItem', {
+      id: product.value.id,
+      name: product.value.name,
+      price: product.value.price,
+      image: product.value.image
+    })
+  }
 }
 
 onMounted(() => {
@@ -430,25 +464,29 @@ onMounted(() => {
 
 .add-to-cart {
   width: 100%;
-  padding: 12px;
-  background-color: #474747;
+  padding: 15px;
+  background: #474747;
   color: white;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
   font-size: 16px;
+  cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 20px;
-  font-family: 'Manrope', sans-serif;
+  position: relative;
+  overflow: hidden;
 }
 
 .add-to-cart:hover {
-  background-color: #5a5a5a;
+  background: #5a5a5a;
   transform: translateY(-1px);
 }
 
-.add-to-cart:active {
-  transform: translateY(0);
+.add-to-cart.in-cart {
+  background: #2c5282;
+}
+
+.add-to-cart.in-cart:hover {
+  background: #2b4c7e;
 }
 
 /* Сообщения об ошибках */

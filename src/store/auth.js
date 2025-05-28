@@ -10,6 +10,9 @@ export const useAuthStore = defineStore('auth', () => {
   const userRole = ref(localStorage.getItem('user_role'))
   const currentUser = ref(JSON.parse(localStorage.getItem('user_data') || 'null'))
 
+  // 1. ДОБАВЛЕН REF ДЛЯ ХРАНЕНИЯ СООБЩЕНИЯ
+  const logoutMessage = ref(null)
+
   const isAuthenticated = computed(() => !!accessToken.value)
   const isAdmin = computed(() => userRole.value === 'admin')
 
@@ -43,7 +46,8 @@ export const useAuthStore = defineStore('auth', () => {
             
             return instance(originalRequest)
           } catch (refreshError) {
-            await logout()
+            // 2. ИЗМЕНЕНИЕ: ПЕРЕДАЕМ СООБЩЕНИЕ В LOGOUT
+            await logout('Простите, сессия истекла или сервер был перезапущен. Пожалуйста, войдите снова.')
             return Promise.reject(refreshError)
           }
         }
@@ -74,7 +78,6 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('refresh_token', refreshToken.value)
     localStorage.setItem('user_role', userRole.value)
     
-    // Получаем данные пользователя
     const api = getApiClient()
     const userResponse = await api.get('auth/user/')
     
@@ -95,7 +98,6 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('refresh_token', refreshToken.value)
     localStorage.setItem('user_role', userRole.value)
     
-    // Получаем данные пользователя 12
     const api = getApiClient()
     const userResponse = await api.get('auth/user/')
     
@@ -105,14 +107,19 @@ export const useAuthStore = defineStore('auth', () => {
     router.push('/')
   }
 
-  async function logout() {
+  // 3. ОБНОВЛЕННАЯ ФУНКЦИЯ LOGOUT
+  async function logout(message = null) {
+    if (message) {
+      logoutMessage.value = message
+    }
+
     try {
-      const api = getApiClient()
+      const api = axios.create({ baseURL: 'http://localhost:8000/api/' })
       await api.post('auth/logout/', {
         refresh_token: refreshToken.value
       })
     } catch (error) {
-      console.error('Ошибка при выходе:', error)
+      console.error('Ошибка при выходе (возможно, токен уже недействителен):', error)
     } finally {
       accessToken.value = null
       refreshToken.value = null
@@ -124,7 +131,9 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.removeItem('user_role')
       localStorage.removeItem('user_data')
       
-      router.push('/login')
+      if (router.currentRoute.value.path !== '/login') {
+        router.push('/login')
+      }
     }
   }
 
@@ -141,6 +150,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // 4. ДОБАВЛЕНА ФУНКЦИЯ ОЧИСТКИ СООБЩЕНИЯ
+  function clearLogoutMessage() {
+    logoutMessage.value = null
+  }
+
+  // 5. ДОБАВЛЕНЫ НОВЫЕ ЭЛЕМЕНТЫ В RETURN
   return { 
     accessToken,
     refreshToken,
@@ -152,6 +167,8 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     fetchUserData,
-    getApiClient // Экспортируем метод для получения API клиента
+    getApiClient,
+    logoutMessage,
+    clearLogoutMessage,
   }
 })

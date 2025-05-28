@@ -4,9 +4,9 @@
       <h2>Профиль пользователя</h2>
 
       <div v-if="isLoading" class="loading-overlay">
-      <div class="spinner"></div>
-      <span>Загрузка профиля...</span>
-    </div>
+        <div class="spinner"></div>
+        <span>Загрузка профиля...</span>
+      </div>
       
       <div v-if="user" class="profile-content">
         <div class="profile-field">
@@ -29,8 +29,93 @@
           <span class="field-value">{{ user.role_display }}</span>
         </div>
       </div>
+
+      <!-- Секция заказов -->
+      <div v-if="user && user.orders" class="orders-section">
+        <h3>Мои заказы</h3>
+        
+        <!-- Вкладки -->
+        <div class="orders-tabs">
+          <button 
+            class="tab-button" 
+            :class="{ active: currentTab === 'pending' }"
+            @click="currentTab = 'pending'"
+          >
+            Ждут получения
+          </button>
+          <button 
+            class="tab-button" 
+            :class="{ active: currentTab === 'completed' }"
+            @click="currentTab = 'completed'"
+          >
+            Завершенные
+          </button>
+          <button 
+            class="tab-button" 
+            :class="{ active: currentTab === 'cancelled' }"
+            @click="currentTab = 'cancelled'"
+          >
+            Отмененные
+          </button>
+        </div>
+
+        <div v-if="filteredOrders.length === 0" class="no-orders">
+          <template v-if="currentTab === 'pending'">
+            У вас нет заказов, ожидающих получения
+          </template>
+          <template v-else-if="currentTab === 'completed'">
+            У вас нет завершенных заказов
+          </template>
+          <template v-else>
+            У вас нет отмененных заказов
+          </template>
+        </div>
+        
+        <div v-else class="orders-list">
+          <div v-for="order in filteredOrders" :key="order.id" class="order-card">
+            <div class="order-header">
+              <div class="order-info">
+                <span class="order-code">Код заказа: {{ order.code }}</span>
+                <span class="order-date">{{ formatDate(order.created_at) }}</span>
+              </div>
+              <div class="order-status" :class="order.status">
+                {{ getStatusText(order.status) }}
+              </div>
+            </div>
+            
+            <!-- Причина отмены -->
+            <div v-if="order.status === 'cancelled' && order.cancel_reason" class="cancel-reason">
+              <h4>Причина отмены:</h4>
+              <p>{{ order.cancel_reason }}</p>
+            </div>
+
+            <div class="order-items">
+              <div v-for="item in order.items" :key="item.product.id" class="order-item">
+                <img 
+                  :src="getImageUrl(item.product.image)" 
+                  :alt="item.product.name"
+                  class="item-image"
+                  @error="handleImageError"
+                >
+                <div class="item-details">
+                  <span class="item-name">{{ item.product.name }}</span>
+                  <span class="item-article">Артикул: {{ item.product.article }}</span>
+                  <div class="item-price-qty">
+                    <span class="item-quantity">{{ item.quantity }} шт.</span>
+                    <span class="item-price">{{ item.price }} ₽</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="order-footer">
+              <span class="order-total">Итого: {{ order.total_price }} ₽</span>
+            </div>
+          </div>
+        </div>
+      </div>
       
-       <button 
+      <button 
         @click="showLogoutConfirm = true" 
         class="logout-btn"
         :disabled="isLoading"
@@ -62,24 +147,62 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
-  import axios from 'axios'
-  import { useAuthStore } from '@/store/auth.js'
-  
-  const authStore = useAuthStore()
-  const user = ref(null)
-  const isLoading = ref(false)
-  const showLogoutConfirm = ref(false)
+import { ref, onMounted, computed } from 'vue'
+import axios from 'axios'
+import { useAuthStore } from '@/store/auth.js'
 
-  const confirmLogout = () => {
+const authStore = useAuthStore()
+const user = ref(null)
+const isLoading = ref(false)
+const showLogoutConfirm = ref(false)
+const baseUrl = 'http://localhost:8000'
+const currentTab = ref('pending')
+
+// Фильтрация заказов по статусу
+const filteredOrders = computed(() => {
+  if (!user.value?.orders) return []
+  return user.value.orders.filter(order => order.status === currentTab.value)
+})
+
+const confirmLogout = () => {
   showLogoutConfirm.value = false
   authStore.logout()
 }
 
+const formatDate = (dateString) => {
+  const options = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }
+  return new Date(dateString).toLocaleDateString('ru-RU', options)
+}
 
-  onMounted(async () => {
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return require('@/assets/img/no-image.webp')
+  if (imagePath.startsWith('http')) return imagePath
+  return `${baseUrl}${imagePath}`
+}
+
+const handleImageError = (e) => {
+  e.target.src = require('@/assets/img/no-image.webp')
+}
+
+// Получение текста статуса
+const getStatusText = (status) => {
+  const statusMap = {
+    'pending': 'Ожидает получения',
+    'completed': 'Получен',
+    'cancelled': 'Отменён'
+  }
+  return statusMap[status] || status
+}
+
+onMounted(async () => {
   try {
-     isLoading.value = true
+    isLoading.value = true
     const response = await axios.get('http://localhost:8000/api/auth/user/', {
       headers: {
         'Authorization': `Bearer ${authStore.accessToken}`,
@@ -98,7 +221,7 @@
     isLoading.value = false
   }
 })
-  </script>
+</script>
 
 <style scoped>
 .profile-container {
@@ -330,5 +453,253 @@ h2 {
 
 .confirm-btn:hover {
   background-color: rgba(255, 77, 79, 0.5);
+}
+
+/* Стили для секции заказов */
+.orders-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(115, 115, 115, 0.3);
+}
+
+.orders-section h3 {
+  font-size: 20px;
+  color: #dededecb;
+  margin-bottom: 20px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+}
+
+.no-orders {
+  text-align: center;
+  color: #8d8d8d;
+  padding: 20px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(115, 115, 115, 0.5);
+  border-radius: 16px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  border-color: rgba(222, 222, 222, 0.3);
+  transform: translateY(-2px);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(115, 115, 115, 0.3);
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.order-code {
+  font-weight: 500;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.order-date {
+  color: #8d8d8d;
+  font-size: 14px;
+}
+
+.order-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.order-status.pending {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.order-status.completed {
+  background: rgba(66, 185, 131, 0.2);
+  color: #42b983;
+}
+
+.order-status.cancelled {
+  background: rgba(255, 77, 79, 0.2);
+  color: #ff4d4f;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-item {
+  display: flex;
+  gap: 15px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.item-name {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.item-article {
+  color: #8d8d8d;
+  font-size: 14px;
+}
+
+.item-price-qty {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.item-quantity {
+  color: #8d8d8d;
+}
+
+.item-price {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.order-footer {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(115, 115, 115, 0.3);
+  text-align: right;
+}
+
+.order-total {
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .order-item {
+    flex-direction: column;
+  }
+
+  .item-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .item-price-qty {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
+
+/* Стили для вкладок */
+.orders-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(115, 115, 115, 0.3);
+  padding-bottom: 10px;
+}
+
+.tab-button {
+  padding: 8px 16px;
+  background: rgba(71, 71, 71, 0.3);
+  border: 1px solid #737373;
+  border-radius: 8px;
+  color: #dededecb;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Manrope', sans-serif;
+}
+
+.tab-button:hover {
+  background: rgba(71, 71, 71, 0.5);
+  transform: translateY(-1px);
+}
+
+.tab-button.active {
+  background: rgba(66, 185, 131, 0.3);
+  border-color: rgba(66, 185, 131, 0.5);
+  color: #ffffff;
+}
+
+/* Обновляем стили для списка заказов */
+.orders-list {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Стили для причины отмены */
+.cancel-reason {
+  margin: 15px 0;
+  padding: 15px;
+  background: rgba(255, 77, 79, 0.1);
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  border-radius: 8px;
+}
+
+.cancel-reason h4 {
+  color: #ff4d4f;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-family: 'Manrope', sans-serif;
+}
+
+.cancel-reason p {
+  color: #dededecb;
+  font-family: 'Manrope', sans-serif;
+  margin: 0;
+  line-height: 1.5;
 }
 </style>

@@ -42,10 +42,37 @@
       to="/admin-panel"
     >
       Админ-панель
-      
     </router-link>
+    <router-link class="nav-link admin-button"
+      v-if="authStore.isAuthenticated && authStore.isAdmin" 
+      to="/admin/orders"
+    > Заказы </router-link>
       
       <router-link class="nav-link profile-link" v-if="authStore.isAuthenticated" to="/profile">Профиль</router-link>
+      
+      <!-- Добавляем кнопку корзины -->
+      <router-link 
+        v-if="authStore.isAuthenticated" 
+        to="/cart" 
+        class="nav-link cart-button"
+      >
+        <div class="cart-icon-wrapper">
+          <svg 
+            class="cart-icon" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="2"
+          >
+            <path d="M9 22a1 1 0 100-2 1 1 0 000 2zM20 22a1 1 0 100-2 1 1 0 000 2z" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+          </svg>
+          <span v-if="cartItemsCount > 0" class="cart-counter">
+            {{ cartItemsCount }}
+          </span>
+        </div>
+        <span class="cart-text">Корзина</span>
+      </router-link>
     </nav>
 
          
@@ -63,16 +90,23 @@
 import { computed, ref, watch } from 'vue'
 import { useAuthStore } from '@/store/auth.js'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'App',
   setup() {
     const router = useRouter()
+    const store = useStore()
     const searchQuery = ref('')
     const authStore = useAuthStore()
 
     const isAuthenticated = computed(() => {
       return !!localStorage.getItem('access_token')
+    })
+
+    // Добавляем вычисляемое свойство для количества товаров в корзине
+    const cartItemsCount = computed(() => {
+      return store.getters['cart/itemCount']
     })
 
     const redirectToSearch = () => {
@@ -97,7 +131,8 @@ export default {
       authStore,
       searchQuery,
       redirectToSearch,
-      performSearch
+      performSearch,
+      cartItemsCount
     }
   }
 }
@@ -393,6 +428,80 @@ body {
     .catalog_txt {
         font-size: 12px;
     }
+}
+
+/* Стили для кнопки корзины */
+.cart-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(71, 71, 71, 0.5);
+  border: 1px solid #737373;
+  padding: 8px 16px;
+  transition: all 0.3s ease;
+}
+
+.cart-button:hover {
+  background-color: rgba(71, 71, 71, 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(222, 222, 222, 0.1);
+}
+
+.cart-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cart-icon {
+  width: 24px;
+  height: 24px;
+  opacity: 0.8;
+}
+
+.cart-counter {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #e53e3e;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 2px solid #1C1A1C;
+}
+
+.cart-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .cart-button {
+    padding: 6px 12px;
+  }
+
+  .cart-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cart-counter {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+
+  .cart-text {
+    font-size: 14px;
+  }
 }
 
 </style>

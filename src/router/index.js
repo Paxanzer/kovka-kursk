@@ -105,6 +105,26 @@ const routes = [
     name: 'access-denied',
     component: AccessDenied,
     meta: { title: 'Доступ запрещен' }
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: () => import('../components/CartView.vue')
+  },
+  {
+    path: '/orders',
+    name: 'orders',
+    component: () => import('../views/OrdersView.vue')
+  },
+  {
+    path: '/admin/orders',
+    name: 'admin-orders',
+    component: () => import('../views/AdminOrdersView.vue'),
+    meta: { 
+      title: 'Управление заказами',
+      requiresAuth: true,
+      requiresAdmin: true
+    }
   }
 ]
 
