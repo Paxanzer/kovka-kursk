@@ -311,7 +311,7 @@ onMounted(() => {
   background: rgba(71, 71, 71, 0.3);
   padding: 6px 12px;
   border-radius: 6px;
-  font-family: monospace;
+  font-family: 'Manrope', sans-serif;
   font-size: 16px;
   color: #ffffff;
 }

@@ -125,6 +125,12 @@ const closeOrderModal = () => {
   padding: 20px;
 }
 
+.cart-container h2 {
+  color: #ffffff;
+  margin-bottom: 30px;
+  font-family: 'Manrope', sans-serif;
+}
+
 .cart-items {
   display: flex;
   flex-direction: column;
@@ -165,6 +171,7 @@ const closeOrderModal = () => {
   color: #dededecb;
   font-weight: bold;
   margin: 0;
+  font-family: 'Manrope', sans-serif;
 }
 
 .quantity-controls {
@@ -192,6 +199,7 @@ const closeOrderModal = () => {
   color: #dededecb;
   min-width: 30px;
   text-align: center;
+  font-family: 'Manrope', sans-serif;
 }
 
 .remove-item {
@@ -222,6 +230,7 @@ const closeOrderModal = () => {
   color: #ffffff;
   font-size: 20px;
   margin-bottom: 20px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .checkout-button {
@@ -234,6 +243,7 @@ const closeOrderModal = () => {
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s;
+  font-family: 'Manrope', sans-serif;
 }
 
 .checkout-button:hover {
@@ -245,6 +255,7 @@ const closeOrderModal = () => {
   text-align: center;
   color: #dededecb;
   padding: 40px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .continue-shopping {
@@ -256,6 +267,7 @@ const closeOrderModal = () => {
   text-decoration: none;
   border-radius: 8px;
   transition: background 0.3s;
+  font-family: 'Manrope', sans-serif;
 }
 
 .continue-shopping:hover {
@@ -286,6 +298,12 @@ const closeOrderModal = () => {
   border: 1px solid #737373;
 }
 
+.order-modal-content h3 {
+  color: #ffffff;
+  margin-bottom: 20px;
+  font-family: 'Manrope', sans-serif;
+}
+
 .order-code {
   margin: 20px 0;
 }
@@ -299,13 +317,14 @@ const closeOrderModal = () => {
   background: rgba(71, 71, 71, 0.3);
   border-radius: 8px;
   margin: 10px 0;
-  font-family: monospace;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-info {
   color: #dededecb;
   margin: 20px 0;
   line-height: 1.5;
+  font-family: 'Manrope', sans-serif;
 }
 
 .close-button {
@@ -316,6 +335,7 @@ const closeOrderModal = () => {
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s;
+  font-family: 'Manrope', sans-serif;
 }
 
 .close-button:hover {
@@ -340,5 +360,9 @@ const closeOrderModal = () => {
   .remove-item {
     align-self: flex-end;
   }
+}
+
+.order-id {
+  font-family: 'Manrope', sans-serif;
 }
 </style> 

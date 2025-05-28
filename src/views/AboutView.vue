@@ -270,6 +270,16 @@ import CategoriesComp from '@/components/CategoriesComp.vue';
     background: #1C1A1C;
 }
 
+.about-title {
+  font-family: 'Manrope', sans-serif;
+}
 
+.about-text {
+  font-family: 'Manrope', sans-serif;
+}
+
+.about-text-2 {
+  font-family: 'Manrope', sans-serif;
+}
 
 </style>

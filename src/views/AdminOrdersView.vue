@@ -360,6 +360,7 @@ const calculateTotal = (items) => {
   background: rgba(0, 0, 0, 0.23);
   color: #ffffff;
   font-size: 16px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .search-button {
@@ -374,6 +375,7 @@ const calculateTotal = (items) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: 'Manrope', sans-serif;
 }
 
 .search-button:hover {
@@ -418,12 +420,14 @@ const calculateTotal = (items) => {
 .order-header h2 {
   color: #ffffff;
   margin: 0;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-status {
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: 20px;
   font-size: 14px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-status.pending {
@@ -453,6 +457,7 @@ const calculateTotal = (items) => {
   color: #ffffff;
   margin-top: 0;
   margin-bottom: 15px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .info-grid {
@@ -467,13 +472,15 @@ const calculateTotal = (items) => {
   gap: 5px;
 }
 
-.label {
+.info-item .label {
   color: #8d8d8d;
   font-size: 14px;
+  font-family: 'Manrope', sans-serif;
 }
 
-.value {
+.info-item .value {
   color: #ffffff;
+  font-family: 'Manrope', sans-serif;
 }
 
 /* Список товаров */
@@ -484,6 +491,7 @@ const calculateTotal = (items) => {
 .order-items h3 {
   color: #ffffff;
   margin-bottom: 15px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .items-list {
@@ -514,12 +522,14 @@ const calculateTotal = (items) => {
 .item-details h4 {
   color: #ffffff;
   margin: 0 0 5px 0;
+  font-family: 'Manrope', sans-serif;
 }
 
 .item-article {
   color: #8d8d8d;
   font-size: 14px;
   margin: 5px 0;
+  font-family: 'Manrope', sans-serif;
 }
 
 .item-meta {
@@ -529,12 +539,29 @@ const calculateTotal = (items) => {
   color: #dededecb;
 }
 
+.item-meta .quantity,
+.item-meta .price {
+  font-family: 'Manrope', sans-serif;
+}
+
 /* Итоги заказа */
 .order-summary {
   margin-top: 20px;
   padding: 20px;
   background: rgba(0, 0, 0, 0.1);
   border-radius: 12px;
+}
+
+.order-summary .total,
+.order-summary .order-code,
+.order-summary .order-date {
+  font-family: 'Manrope', sans-serif;
+}
+
+.total span,
+.order-code span,
+.order-date span {
+  font-family: 'Manrope', sans-serif;
 }
 
 .total {
@@ -549,14 +576,16 @@ const calculateTotal = (items) => {
   display: flex;
   justify-content: space-between;
   margin: 10px 0;
-  color: #dededecb;
+  color: #ffffff;
+  font-weight: 500;
 }
 
 .code {
+  font-family: 'Manrope', sans-serif;
   background: rgba(71, 71, 71, 0.3);
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-family: monospace;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: #ffffff;
 }
 
 .order-date {
@@ -564,6 +593,7 @@ const calculateTotal = (items) => {
   justify-content: space-between;
   color: #8d8d8d;
   font-size: 14px;
+  font-family: 'Manrope', sans-serif;
 }
 
 /* Управление статусом */
@@ -581,6 +611,7 @@ const calculateTotal = (items) => {
   border-radius: 8px;
   color: #ffffff;
   cursor: pointer;
+  font-family: 'Manrope', sans-serif;
 }
 
 /* Анимации */
@@ -762,9 +793,8 @@ const calculateTotal = (items) => {
   border-bottom: 1px solid rgba(115, 115, 115, 0.3);
 }
 
-.order-code {
-  color: #ffffff;
-  font-weight: 500;
+.order-card-header .order-code {
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-info-row {
@@ -776,11 +806,13 @@ const calculateTotal = (items) => {
 .order-info-row .label {
   color: #8d8d8d;
   font-size: 14px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-info-row .value {
   color: #ffffff;
   font-weight: 500;
+  font-family: 'Manrope', sans-serif;
 }
 
 /* Адаптивность для мобильных устройств */
@@ -796,10 +828,10 @@ const calculateTotal = (items) => {
 
 /* Стили для статусов заказов */
 .order-status {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-status.pending {
@@ -815,5 +847,18 @@ const calculateTotal = (items) => {
 .order-status.cancelled {
   background: rgba(244, 67, 54, 0.2);
   color: #f44336;
+}
+
+.order-id {
+  font-family: 'Manrope', sans-serif;
+}
+
+.item-quantity, .item-price {
+  font-family: 'Manrope', sans-serif;
+}
+
+.total-price {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
 }
 </style> 

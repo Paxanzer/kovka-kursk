@@ -243,11 +243,15 @@ onMounted(async () => {
   border: 1px solid #737373;
   border-radius: 32px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: transform 0.5s ease-out, box-shadow 0.5s ease-out;
+  transition: all 0.3s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .profile-card:hover {
-  transform: scale(1.005);
+  transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(222, 222, 222, 0.11);
 }
 
@@ -515,11 +519,13 @@ h2 {
   font-weight: 500;
   color: #ffffff;
   font-size: 16px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-date {
   color: #8d8d8d;
   font-size: 14px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-status {
@@ -527,6 +533,7 @@ h2 {
   border-radius: 20px;
   font-size: 14px;
   font-weight: 500;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-status.pending {
@@ -575,11 +582,13 @@ h2 {
 .item-name {
   color: #ffffff;
   font-weight: 500;
+  font-family: 'Manrope', sans-serif;
 }
 
 .item-article {
   color: #8d8d8d;
   font-size: 14px;
+  font-family: 'Manrope', sans-serif;
 }
 
 .item-price-qty {
@@ -591,11 +600,13 @@ h2 {
 
 .item-quantity {
   color: #8d8d8d;
+  font-family: 'Manrope', sans-serif;
 }
 
 .item-price {
   color: #ffffff;
   font-weight: 500;
+  font-family: 'Manrope', sans-serif;
 }
 
 .order-footer {
@@ -609,6 +620,7 @@ h2 {
   color: #ffffff;
   font-weight: 500;
   font-size: 18px;
+  font-family: 'Manrope', sans-serif;
 }
 
 /* Адаптивность для мобильных устройств */
@@ -642,6 +654,8 @@ h2 {
   margin-bottom: 20px;
   border-bottom: 1px solid rgba(115, 115, 115, 0.3);
   padding-bottom: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .tab-button {
@@ -653,6 +667,46 @@ h2 {
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: 'Manrope', sans-serif;
+  white-space: nowrap;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .orders-tabs {
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 15px;
+  }
+
+  .tab-button {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tab-button::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #dededecb;
+    border-bottom: 2px solid #dededecb;
+    transform: rotate(-45deg);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+  }
+
+  .tab-button.active::after {
+    opacity: 1;
+    border-color: #ffffff;
+  }
+
+  .tab-button:hover::after {
+    opacity: 0.8;
+  }
 }
 
 .tab-button:hover {
@@ -701,5 +755,49 @@ h2 {
   font-family: 'Manrope', sans-serif;
   margin: 0;
   line-height: 1.5;
+}
+
+.profile-container h1,
+.profile-container h2,
+.profile-container h3 {
+  color: #ffffff;
+  font-family: 'Manrope', sans-serif;
+}
+
+.profile-section {
+  background: rgba(0, 0, 0, 0.23);
+  border: 1px solid #737373;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  color: #dededecb;
+  margin-bottom: 8px;
+  display: block;
+  font-family: 'Manrope', sans-serif;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.23);
+  border: 1px solid #737373;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
+}
+
+.save-button {
+  background: #474747;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: 'Manrope', sans-serif;
 }
 </style>
