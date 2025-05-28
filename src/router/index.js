@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
-import CategoriesView from '../components/CategoriesComp.vue'
+
 import CatalogView from '../components/CatalogView.vue'
 import LoginView from '../views/LoginView.vue' // Создайте этот компонент
 import RegisterView from '../views/RegisterView.vue' // Создайте этот компонент
@@ -18,21 +18,21 @@ const routes = [
     meta: { title: 'Главная' }
   },
   {
-    path: '/about',
-    name: 'About',
+    path: '/catalog',
+    name: 'categories',
     component: AboutView,
-    meta: { title: 'О нас' }
+    meta: { title: 'Каталог' }
+  },
+  {
+    path: '/about',
+    name: 'categories',
+    component: AboutView,
+    meta: { title: 'Каталог' }
   },
   {
     path: '/product/:productId',
     name: 'ProductDetail',
     component: () => import('../views/DetailView.vue')
-  },
-  {
-    path: '/catalog',
-    name: 'categories',
-    component: CategoriesView,
-    meta: { title: 'Каталог' }
   },
   {
   path: '/catalogs',

@@ -15,7 +15,7 @@
             alt="Каталог"
           >
           <router-link class="nav-link home-link" to="/">Главная</router-link>
-      <router-link class="nav-link catalog-link" to="/about">Каталог</router-link>
+      <router-link class="nav-link catalog-link" to="/catalog">Каталог</router-link>
         <div class="search_fr">
           <div class="search_button">
             <p class="search_Btxt">поиск</p>
@@ -147,10 +147,14 @@ export default {
   transition: all 0.3s ease;
   font-family: 'Manrope', sans-serif;
   font-size: 16px;
-  margin: 0 10px;
-  padding: 8px 16px;
+  padding: 0 16px;
   border-radius: 20px;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 /* Кнопка регистрации */
@@ -169,6 +173,8 @@ export default {
 .admin-button {
   background-color: rgb(147 53 53 / 50%);
   border: 1px solid #f16666;
+  margin: 0 5px;
+  min-height: 40px;
 }
 
 .admin-button:hover {
@@ -194,7 +200,8 @@ export default {
 .profile-link {
   background-color: rgba(0, 0, 0, 0.23);
   border: 1px solid #737373;
-  padding: 8px 20px;
+  margin: 0 5px;
+  min-height: 40px;
 }
 
 .profile-link:hover {
@@ -249,9 +256,10 @@ export default {
 /* Адаптация для мобильных */
 @media (max-width: 768px) {
   .nav-link {
-    margin: 5px;
-    padding: 8px 12px;
-    font-size: 13px;
+    font-size: 14px;
+    padding: 0 12px;
+    margin: 2px;
+    min-height: 36px; /* Немного меньше на мобильных */
   }
   
   .register-button,
@@ -260,6 +268,12 @@ export default {
     width: 100%;
     margin: 5px 0;
     text-align: center;
+  }
+
+  .admin-button,
+  .cart-button,
+  .profile-link {
+    min-height: 36px;
   }
 }
 
@@ -432,14 +446,14 @@ body {
 
 /* Стили для кнопки корзины */
 .cart-button {
-  position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background-color: rgba(71, 71, 71, 0.5);
   border: 1px solid #737373;
-  padding: 8px 16px;
-  transition: all 0.3s ease;
+  margin: 0 5px;
+  min-height: 40px;
 }
 
 .cart-button:hover {
@@ -502,6 +516,23 @@ body {
   .cart-text {
     font-size: 14px;
   }
+}
+
+nav {
+    display: flex;
+    align-items: stretch; /* Растягиваем элементы по высоте */
+    gap: 10px;
+    margin-left: auto;
+    height: 40px; /* Фиксированная высота для навигации */
+}
+
+@media (max-width: 768px) {
+    nav {
+        height: auto;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
 }
 
 </style>

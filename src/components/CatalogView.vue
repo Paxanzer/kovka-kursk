@@ -152,7 +152,7 @@ const initProductsObserver = () => {
 }
 //  Добавляем метод для перехода на страницу About
 const goToAbout = () => {
-  router.push('/about');
+  router.push('/catalog');
 };
 
 onMounted(() => {
@@ -166,7 +166,7 @@ watch(filteredProducts, () => {
 }, { deep: true })
 </script>
   
-  <style scoped>
+<style scoped>
   
 /* Основные стили контейнера */
 .catalog-container {
@@ -187,7 +187,7 @@ watch(filteredProducts, () => {
     padding: 15px 0;
     width: 100%;
     gap: 20px; /* Начальный отступ между элементами */
-    box-sizing: border-box;
+    
 }
 
 .breadcrumb-link {

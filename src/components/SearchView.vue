@@ -240,7 +240,7 @@ onMounted(() => {
   padding: 15px 0;
   width: 100%;
   gap: 20px;
-  box-sizing: border-box;
+  
   flex-wrap: wrap;
 }
 

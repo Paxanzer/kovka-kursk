@@ -2,7 +2,7 @@
   <div class="detail-container fade-in">
     <!-- Хлебные крошки -->
     <nav class="breadcrumbs">
-      <router-link to="/about" class="breadcrumb-link">Все категории</router-link>
+      <router-link to="/catalog" class="breadcrumb-link">Все категории</router-link>
       <span class="breadcrumb-separator">/</span>
       <router-link 
         :to="`/catalog/${product.category?.id || product.category}`" 

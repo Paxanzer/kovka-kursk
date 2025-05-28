@@ -24,10 +24,6 @@
           <span class="field-value">{{ user.phone || 'Не указан' }}</span>
         </div>
         
-        <div class="profile-field">
-          <span class="field-label">Роль:</span>
-          <span class="field-value">{{ user.role_display }}</span>
-        </div>
       </div>
 
       <!-- Секция заказов -->
@@ -40,6 +36,7 @@
             class="tab-button" 
             :class="{ active: currentTab === 'pending' }"
             @click="currentTab = 'pending'"
+            data-tab="pending"
           >
             Ждут получения
           </button>
@@ -47,6 +44,7 @@
             class="tab-button" 
             :class="{ active: currentTab === 'completed' }"
             @click="currentTab = 'completed'"
+            data-tab="completed"
           >
             Завершенные
           </button>
@@ -54,6 +52,7 @@
             class="tab-button" 
             :class="{ active: currentTab === 'cancelled' }"
             @click="currentTab = 'cancelled'"
+            data-tab="cancelled"
           >
             Отмененные
           </button>
@@ -650,74 +649,72 @@ h2 {
 /* Стили для вкладок */
 .orders-tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(115, 115, 115, 0.3);
-  padding-bottom: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .tab-button {
   padding: 8px 16px;
-  background: rgba(71, 71, 71, 0.3);
+  border-radius: 20px;
   border: 1px solid #737373;
-  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.23);
   color: #dededecb;
   cursor: pointer;
-  transition: all 0.3s ease;
   font-family: 'Manrope', sans-serif;
-  white-space: nowrap;
-  text-align: center;
-}
-
-@media (max-width: 480px) {
-  .orders-tabs {
-    flex-direction: column;
-    gap: 8px;
-    padding-bottom: 15px;
-  }
-
-  .tab-button {
-    width: 100%;
-    padding: 10px 16px;
-    font-size: 14px;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .tab-button::after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-right: 2px solid #dededecb;
-    border-bottom: 2px solid #dededecb;
-    transform: rotate(-45deg);
-    opacity: 0.5;
-    transition: all 0.3s ease;
-  }
-
-  .tab-button.active::after {
-    opacity: 1;
-    border-color: #ffffff;
-  }
-
-  .tab-button:hover::after {
-    opacity: 0.8;
-  }
+  font-size: 14px;
+  transition: all 0.3s ease;
 }
 
 .tab-button:hover {
-  background: rgba(71, 71, 71, 0.5);
   transform: translateY(-1px);
 }
 
-.tab-button.active {
-  background: rgba(66, 185, 131, 0.3);
+/* Стили для активных вкладок */
+.tab-button.active[data-tab="pending"] {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.tab-button.active[data-tab="completed"] {
+  background: rgba(66, 185, 131, 0.2);
+  border-color: #42b983;
+  color: #42b983;
+}
+
+.tab-button.active[data-tab="cancelled"] {
+  background: rgba(255, 77, 79, 0.2);
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+/* Стили при наведении для неактивных вкладок */
+.tab-button:not(.active):hover[data-tab="pending"] {
+  background: rgba(255, 193, 7, 0.1);
+  border-color: rgba(255, 193, 7, 0.5);
+}
+
+.tab-button:not(.active):hover[data-tab="completed"] {
+  background: rgba(66, 185, 131, 0.1);
   border-color: rgba(66, 185, 131, 0.5);
-  color: #ffffff;
+}
+
+.tab-button:not(.active):hover[data-tab="cancelled"] {
+  background: rgba(255, 77, 79, 0.1);
+  border-color: rgba(255, 77, 79, 0.5);
+}
+
+@media (max-width: 768px) {
+  .orders-tabs {
+    justify-content: center;
+  }
+  
+  .tab-button {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
 }
 
 /* Обновляем стили для списка заказов */

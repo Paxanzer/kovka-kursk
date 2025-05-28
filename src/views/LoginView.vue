@@ -149,7 +149,7 @@ h2 {
 }
 
 .input-field {
-  width: 96.5%;
+  width: 88.5%;
   padding: 12px;
   border: 1px solid #737373;
   border-radius: 8px;
