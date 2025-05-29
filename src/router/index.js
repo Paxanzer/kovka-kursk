@@ -2,10 +2,11 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
 
+
 import CatalogView from '../components/CatalogView.vue'
 import LoginView from '../views/LoginView.vue' // Создайте этот компонент
 import RegisterView from '../views/RegisterView.vue' // Создайте этот компонент
-import AccessDenied from '../components/AccessDenied.vue' // Компонент для ошибки доступа
+
 import { useAuthStore } from '@/store/auth'
 import SearchVue from '../components/SearchView.vue' // Компонент для ошибки доступа
 
@@ -19,7 +20,7 @@ const routes = [
   },
   {
     path: '/catalog',
-    name: 'categories',
+    name: 'categories2',
     component: AboutView,
     meta: { title: 'Каталог' }
   },
@@ -46,16 +47,6 @@ const routes = [
     component: CatalogView,
     props: true,
     meta: { title: 'Категория'}
-  },
-  {
-    path: '/admin',
-    name: 'admin',
-    //component: () => import('../views/AdminView.vue'),
-    meta: { 
-      title: 'Админ-панель',
-      requiresAuth: true,
-      requiredRole: 'admin' 
-    }
   },
   {
     path: '/profile',
@@ -93,18 +84,6 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: true
     }
-  },
-  //{
-  //  path: '/admin-panel',
-  //  name: 'AdminPanel',
-  //  component: AdminPanel,
-  //  meta: { requiresAuth: true, requiresAdmin: true }
-  //},
-  {
-    path: '/access-denied',
-    name: 'access-denied',
-    component: AccessDenied,
-    meta: { title: 'Доступ запрещен' }
   },
   {
     path: '/cart',

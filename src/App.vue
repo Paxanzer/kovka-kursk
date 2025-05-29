@@ -31,7 +31,6 @@
         </div>
 
         <div class="catalog-container">
-          
 
           <nav>
         <router-link class="nav-link register-button" v-if="!authStore.isAuthenticated" to="/register">Регистрация</router-link>
