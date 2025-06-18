@@ -113,7 +113,7 @@ const product = ref({})
 const isLoading = ref(true)
 const error = ref(null)
 const mainImage = ref(null)
-const baseUrl = 'http://localhost:8000'
+const baseUrl = 'https://pashok00191.pythonanywhere.com'
 
 // Добавляем состояния для модального окна
 const showImageModal = ref(false)

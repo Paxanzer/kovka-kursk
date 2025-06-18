@@ -80,11 +80,11 @@
   })
   
   watch(() => props.product, (newVal) => {
-    formData.value = { 
-      ...newVal,
-      category: newVal.category?.id || null
-    }
-  }, { immediate: true })
+  
+  if (newVal) {
+    formData.value = { ...newVal };
+  }
+}, { immediate: true, deep: true })
   
   const handleImageUpload = (e) => {
     formData.value.image = e.target.files[0]
@@ -179,7 +179,7 @@ label {
 input, 
 select,
 textarea {
-  width: 100%;
+  width: 93%;
   padding: 12px 15px;
   background: rgba(50, 50, 50, 0.5);
   border: 1px solid #4a4a4a;

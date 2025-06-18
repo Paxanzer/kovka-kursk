@@ -72,7 +72,7 @@ const route = useRoute()
 const products = ref([])
 const isLoading = ref(true)
 const error = ref(null)
-const baseUrl = 'http://localhost:8000'
+const baseUrl = 'https://pashok00191.pythonanywhere.com'
 const visibleProductIds = ref([]) // Для отслеживания видимых карточек
 
 const categoryId = computed(() => parseInt(route.params.categoryId))

@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', () => {
   // Функция для создания экземпляра API
   const createApiClient = () => {
     const instance = axios.create({
-      baseURL: 'http://localhost:8000/api/',
+      baseURL: 'https://pashok00191.pythonanywhere.com/api/',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken.value}`
@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
           originalRequest._retry = true
           
           try {
-            const response = await axios.post('http://localhost:8000/api/auth/refresh/', {
+            const response = await axios.post('https://pashok00191.pythonanywhere.com/api/auth/refresh/', {
               refresh: refreshToken.value
             })
             
@@ -51,7 +51,6 @@ export const useAuthStore = defineStore('auth', () => {
             return Promise.reject(refreshError)
           }
         }
-
         return Promise.reject(error)
       }
     )
@@ -68,7 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function login(userData) {
-    const response = await axios.post('http://localhost:8000/api/auth/login/', userData)
+    const response = await axios.post('https://pashok00191.pythonanywhere.com/api/auth/login/', userData)
     
     accessToken.value = response.data.access
     refreshToken.value = response.data.refresh
@@ -88,7 +87,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function register(userData) {
-    const response = await axios.post('http://localhost:8000/api/auth/register/', userData)
+    const response = await axios.post('https://pashok00191.pythonanywhere.com/api/auth/register/', userData)
     
     accessToken.value = response.data.access
     refreshToken.value = response.data.refresh
@@ -114,7 +113,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
-      const api = axios.create({ baseURL: 'http://localhost:8000/api/' })
+      const api = axios.create({ baseURL: 'https://pashok00191.pythonanywhere.com/api/' })
       await api.post('auth/logout/', {
         refresh_token: refreshToken.value
       })

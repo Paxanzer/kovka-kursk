@@ -169,7 +169,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/store/auth'
 
 const authStore = useAuthStore()
-const baseUrl = 'http://localhost:8000'
+const baseUrl = 'https://pashok00191.pythonanywhere.com'
 
 const searchCode = ref('')
 const order = ref(null)

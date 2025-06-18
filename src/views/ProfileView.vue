@@ -154,7 +154,7 @@ const authStore = useAuthStore()
 const user = ref(null)
 const isLoading = ref(false)
 const showLogoutConfirm = ref(false)
-const baseUrl = 'http://localhost:8000'
+const baseUrl = 'https://pashok00191.pythonanywhere.com'
 const currentTab = ref('pending')
 
 // Фильтрация заказов по статусу
@@ -202,7 +202,7 @@ const getStatusText = (status) => {
 onMounted(async () => {
   try {
     isLoading.value = true
-    const response = await axios.get('http://localhost:8000/api/auth/user/', {
+    const response = await axios.get('https://pashok00191.pythonanywhere.com/api/auth/user/', {
       headers: {
         'Authorization': `Bearer ${authStore.accessToken}`,
         'Content-Type': 'application/json'

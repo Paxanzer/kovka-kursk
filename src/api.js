@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000', // Ваш Django API URL
+  baseURL: 'https://pashok00191.pythonanywhere.com', // Ваш Django API URL
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',

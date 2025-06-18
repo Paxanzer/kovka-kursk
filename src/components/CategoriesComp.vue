@@ -44,7 +44,7 @@ const isLoading = ref(true)
 const visibleIds = ref([]) // Добавляем для Intersection Observer
 
 // Константы
-const baseUrl = 'http://localhost:8000'
+const baseUrl = 'https://pashok00191.pythonanywhere.com'
 
 // Методы
 const adjustTextSize = () => {

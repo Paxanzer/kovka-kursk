@@ -11,7 +11,7 @@
       <div class="navbar">
         <img 
             class="catalog_img"
-            src="@/assets/catalog.png" 
+            src="@/assets/logo_k.png" 
             alt="Каталог"
           >
           <router-link class="nav-link home-link" to="/">Главная</router-link>
@@ -382,8 +382,8 @@ body {
 }
 
 .catalog_img {
-    width: 30px;
-    height: 30px;
+    width: 45px;
+    height: 45px;
     opacity: 0.4;
     border-radius: 4px;
     cursor: pointer;

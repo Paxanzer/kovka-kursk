@@ -70,7 +70,7 @@ import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
-const baseUrl = 'http://localhost:8000'
+const baseUrl = 'https://pashok00191.pythonanywhere.com'
 
 // Реактивные данные
 const products = ref([])

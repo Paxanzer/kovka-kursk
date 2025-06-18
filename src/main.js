@@ -6,7 +6,7 @@ import { createPinia } from 'pinia'
 import axios from 'axios'
 
 
-axios.defaults.baseURL = 'http://localhost:8000'
+axios.defaults.baseURL = 'https://pashok00191.pythonanywhere.com'
 axios.interceptors.request.use(config => {
   const token = localStorage.getItem('access_token')
   if (token) {

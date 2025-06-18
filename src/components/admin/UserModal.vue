@@ -1,69 +1,145 @@
 <template>
-    <div class="modal-overlay">
-      <div class="modal">
-        <h2>{{ user.id ? 'Редактировать пользователя' : 'Добавить пользователя' }}</h2>
+  <div class="modal-overlay" @click.self="$emit('close')">
+    <div class="modal">
+      <h2>{{ isEditMode ? 'Редактирование роли пользователя' : 'Добавить нового пользователя' }}</h2>
+      
+      <form @submit.prevent="handleSubmit">
+        <div class="form-group">
+          <label>Имя пользователя:</label>
+          <input v-model="formData.username" :disabled="isEditMode" required>
+        </div>
         
-        <form @submit.prevent="handleSubmit">
+        <div class="form-group">
+          <label>Email:</label>
+          <input v-model="formData.email" type="email" :disabled="isEditMode" required>
+        </div>
+        
+        <template v-if="!isEditMode">
           <div class="form-group">
-            <label>Имя пользователя:</label>
-            <input v-model="formData.username" required>
+            <label>Пароль:</label>
+            <input v-model="formData.password" type="password" required @input="validatePassword">
           </div>
-          
           <div class="form-group">
-            <label>Email:</label>
-            <input v-model="formData.email" type="email">
+            <label>Подтвердите пароль:</label>
+            <input v-model="formData.confirmPassword" type="password" required @input="validatePassword">
           </div>
-          
-          <div class="form-group">
-            <label>Телефон:</label>
-            <input v-model="formData.phone">
-          </div>
-          
-          <div class="form-group">
-            <label>Роль:</label>
-            <select v-model="formData.role" required>
-              <option value="admin">Администратор</option>
-              <option value="customer">Покупатель</option>
-            </select>
-          </div>
-          
-          <div class="form-actions">
-            <button type="button" @click="$emit('close')">Отмена</button>
-            <button type="submit">Сохранить</button>
-          </div>
-        </form>
-      </div>
+        </template>
+        
+        <div class="form-group">
+          <label>Телефон:</label>
+          <input v-model="formData.phone" :disabled="isEditMode">
+        </div>
+        
+        <div class="form-group">
+          <label>Роль:</label>
+          <select v-model="formData.role" required>
+            <option value="admin">Администратор</option>
+            <option value="customer">Покупатель</option>
+          </select>
+        </div>
+        
+        <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
+
+        <div class="form-actions">
+          <button type="button" @click="$emit('close')">Отмена</button>
+          <button type="submit" :disabled="!!passwordError">Сохранить</button>
+        </div>
+      </form>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, watch } from 'vue'
-  import { defineProps, defineEmits } from 'vue'
-  
-  const props = defineProps({
-    user: {
-      type: Object,
-      required: true
-    }
-  })
-  
-  const emit = defineEmits(['close', 'save'])
-  
-  const formData = ref({
-    username: '',
-    email: '',
-    phone: '',
-    role: 'customer'
-  })
-  
-  watch(() => props.user, (newVal) => {
-    formData.value = { ...newVal }
-  }, { immediate: true })
-  
-  const handleSubmit = () => {
-    emit('save', formData.value)
+  </div>
+</template>
+
+<script setup>
+import { ref, watch, computed } from 'vue';
+import { defineProps, defineEmits } from 'vue';
+
+const props = defineProps({
+  user: {
+    type: Object,
+    // Теперь не required, может быть null для создания
+    default: null 
   }
-  </script>
+});
+
+const emit = defineEmits(['close', 'save']);
+
+// Определяем режим работы
+const isEditMode = computed(() => props.user && props.user.id);
+
+const formData = ref({});
+const passwordError = ref('');
+
+// Эта функция-наблюдатель - "мозг" компонента.
+// Она настраивает форму в нужный режим при открытии окна.
+watch(() => props.user, (newUser) => {
+  if (isEditMode.value) {
+    // РЕЖИМ РЕДАКТИРОВАНИЯ: Копируем данные пользователя
+    formData.value = { ...newUser };
+  } else {
+    // РЕЖИМ СОЗДАНИЯ: Сбрасываем форму до пустого состояния
+    formData.value = {
+      username: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      phone: '',
+      role: 'customer' // Роль по умолчанию
+    };
+  }
+  passwordError.value = ''; // Сбрасываем ошибку пароля
+}, { immediate: true, deep: true });
+
+
+// Валидация пароля (взята из вашего RegisterView)
+const validatePassword = () => {
+  if (!isEditMode.value) { // Проверяем пароль только в режиме создания
+    if (formData.value.password.length > 0 && formData.value.password.length < 8) {
+      passwordError.value = 'Пароль должен содержать минимум 8 символов';
+    } else if (formData.value.password !== formData.value.confirmPassword) {
+      passwordError.value = 'Пароли не совпадают';
+    } else {
+      passwordError.value = '';
+    }
+  }
+};
+
+// Отправка данных
+const handleSubmit = () => {
+  validatePassword();
+  if (passwordError.value) return;
+
+  if (isEditMode.value) {
+    emit('save', {
+      id: props.user.id,
+      role: formData.value.role
+    });
+  } else {
+    // --- НАЧАЛО ИЗМЕНЕНИЙ ---
+
+    // 1. Создаем копию всех данных формы
+    const payload = { ...formData.value };
+
+    // 2. Удаляем из копии ненужное поле подтверждения пароля
+    delete payload.confirmPassword;
+
+    // 3. Отправляем очищенный объект
+    emit('save', payload);
+
+    // --- КОНЕЦ ИЗМЕНЕНИЙ ---
+  }
+};
+</script>
+
+<style>
+/* Здесь ваши стили для модального окна */
+.error-message {
+  color: #ff4d4f;
+  font-size: 14px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+/* ...остальные стили... */
+</style>
   
 <style scoped>
 .modal-overlay {
@@ -149,7 +225,7 @@ label {
 input, 
 select,
 textarea {
-  width: 100%;
+  width: 93%;
   padding: 12px 15px;
   background: rgba(50, 50, 50, 0.5);
   border: 1px solid #4a4a4a;

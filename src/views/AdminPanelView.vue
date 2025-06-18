@@ -31,8 +31,8 @@
         <!-- Пользователи -->
         <div v-if="currentTab === 'Пользователи'" class="users-section">
           <button @click="openUserModal(null)" class="add-button">
-            + Добавить пользователя
-          </button>
+    + Добавить пользователя
+  </button>
           
           <table class="data-table">
             <thead>
@@ -82,7 +82,7 @@
               <tr v-for="product in products" :key="product.id">
                 <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
-                <td>{{ getCategoryName(product.category) }}</td>
+                <td>{{ product.category ? product.category.name : 'Не указана' }}</td>
                 <td>{{ product.price }} ₽</td>
                 <td>{{ product.article }}</td>
                 <td>
@@ -123,27 +123,29 @@
       </div>
 
       <!-- Модальные окна -->
-      <UserModal
-        v-if="showUserModal"
-        :user="selectedUser"
-        @save="saveUser"
-        @close="showUserModal = false"
-      />
-      
-      <ProductModal
-        v-if="showProductModal"
-        :product="selectedProduct"
-        :categories="categories"
-        @save="saveProduct"
-        @close="showProductModal = false"
-      />
-      
-      <CategoryModal
-        v-if="showCategoryModal"
-        :category="selectedCategory"
-        @save="saveCategory"
-        @close="showCategoryModal = false"
-      />
+      <Teleport to="body">
+  <UserModal
+    v-if="showUserModal"
+    :user="selectedUser"
+    @save="saveUser"
+    @close="showUserModal = false"
+  />
+  
+  <ProductModal
+    v-if="showProductModal"
+    :product="selectedProduct"
+    :categories="categories"
+    @save="saveProduct"
+    @close="showProductModal = false"
+  />
+  
+  <CategoryModal
+    v-if="showCategoryModal"
+    :category="selectedCategory"
+    @save="saveCategory"
+    @close="showCategoryModal = false"
+  />
+</Teleport>
 
       <!-- Сообщения об ошибках -->
       <div v-if="error" class="error-message">
@@ -155,7 +157,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/store/auth'
 import UserModal from '@/components/admin/UserModal.vue'
 import ProductModal from '@/components/admin/ProductModal.vue'
@@ -183,11 +185,7 @@ const selectedUser = ref(null)
 const selectedProduct = ref(null)
 const selectedCategory = ref(null)
 
-// Получение названия категории по ID
-const getCategoryName = (categoryId) => {
-  const category = categories.value.find(c => c.id === categoryId)
-  return category ? category.name : 'Не указана'
-}
+
 
 // Загрузка данных
 const fetchData = async () => {
@@ -232,19 +230,34 @@ const openUserModal = (user) => {
 
 const saveUser = async (userData) => {
   try {
-    const api = authStore.getApiClient()
-    const method = userData.id ? 'put' : 'post'
-    const url = userData.id ? `users/${userData.id}/` : 'users/'
-    
-    await api[method](url, userData)
-    await fetchData()
-    showUserModal.value = false
+    const api = authStore.getApiClient();
+
+    if (userData.id) {
+      // РЕЖИM РЕДАКТИРОВАНИЯ (отправляем только роль)
+      await api.patch(`users/${userData.id}/`, {
+        role: userData.role
+      });
+    } else {
+      // РЕЖИМ СОЗДАНИЯ (отправляем все данные для регистрации)
+      await api.post('users/', userData);
+    }
+
+    await fetchData(); // Обновляем данные в таблице
+    showUserModal.value = false; // Закрываем модальное окно
   } catch (err) {
-    console.error('Ошибка сохранения пользователя:', err)
-    error.value = err.response?.data?.message || 'Ошибка при сохранении пользователя'
-    throw err
+    console.error('Ошибка сохранения пользователя:', err.response?.data);
+    const errorData = err.response?.data;
+    // Формируем более читаемое сообщение об ошибке
+    let errorMessage = 'Ошибка при сохранении пользователя.';
+    if (typeof errorData === 'object' && errorData !== null) {
+      errorMessage = Object.entries(errorData)
+        .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
+        .join(' ');
+    }
+    error.value = errorMessage;
+    // Окно не закрываем, чтобы пользователь видел ошибку
   }
-}
+};
 
 const deleteUser = async (id) => {
   if (!confirm('Вы уверены, что хотите удалить этого пользователя?')) return
@@ -385,7 +398,7 @@ onMounted(() => {
   }
 })
 
-watch(currentTab, fetchData)
+
 </script>
 
 <style scoped>

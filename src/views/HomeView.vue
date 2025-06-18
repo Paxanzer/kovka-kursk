@@ -14,7 +14,7 @@
     </div>
 
     <div class="fr1-1" id="fr1-1" :class="{ 'is-visible': visibleIds.includes('fr1-1') }">
-      <p class="txt1">Ковка в дом</p>
+      <p class="txt1">Ковка на дом</p>
       <p class="sec_txt">Склад-магазин - г.Курск</p>
     </div>
 
