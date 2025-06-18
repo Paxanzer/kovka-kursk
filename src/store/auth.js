@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
             return Promise.reject(refreshError)
           }
         }
-        
+
         return Promise.reject(error)
       }
     )
